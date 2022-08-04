@@ -19,7 +19,7 @@ def save_models(df: pd.DataFrame = None) -> None:
     try:
         # Creating the db engine
         engine = create_engine(
-            f"postgresql+psycopg2://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASS']}@127.0.0.1:5432/fuzehubdb_prod",
+            f"postgresql+psycopg2://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASS']}@127.0.0.1:5432/fuzehub",
             future=True,
         )
     except OperationalError as e:
@@ -38,7 +38,7 @@ def save_models(df: pd.DataFrame = None) -> None:
                     slug=model["slug"],
                     uri=model["uri"],
                     image_uri=model["image_uri"],
-                    last_update=model["last_update"],
+                    last_update=model['last_update'],
                 )
                 .on_conflict_do_update(index_elements=["model_id"], set_=model)
             )
