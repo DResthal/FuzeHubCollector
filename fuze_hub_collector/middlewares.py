@@ -5,11 +5,7 @@
 
 from scrapy import signals
 from scrapy.http import HtmlResponse
-
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
-from selenium.webdriver import Chrome, ChromeOptions
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver import Remote, DesiredCapabilities
 
 
 class FuzeHubCollectorSpiderMiddleware:
@@ -62,14 +58,13 @@ class FuzeHubCollectorSpiderMiddleware:
 class FuzeHubCollectorDownloaderMiddleware:
 
     def __init__(self):
-        webdriver_path="./driver/chromedriver"
-        options = ChromeOptions()
-        options.add_argument("--headless")
-        self.driver = Chrome('./fuze_hub_collector/driver/chromedriver', options=options)
+        self.driver = Remote('http://127.0.0.1:4444/wd/hub', desired_capabilities=DesiredCapabilities.CHROME)
+        self.driver.set_window_size(1280, 1024)
 
     @classmethod
     def from_crawler(cls, crawler):
         s = cls()
+        crawler.signals.connect(s.spider_closed, signal=signals.spider_closed)
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
@@ -115,3 +110,8 @@ class FuzeHubCollectorDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+    def spider_closed(self, spider):
+        print("Close function is runing")
+        self.driver.quit()
+        spider.logger.info("Spider closed: %s" % spider.name)
