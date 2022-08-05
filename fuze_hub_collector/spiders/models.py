@@ -1,7 +1,6 @@
 from psycopg2 import OperationalError, ProgrammingError
 import logging
 import scrapy
-from scrapy_selenium import SeleniumRequest
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
