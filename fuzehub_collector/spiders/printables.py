@@ -1,12 +1,21 @@
 import scrapy
+from fuzehub_collector.items import ModelItem
 import json
-from pprint import pprint
+import logging
+from datetime import datetime
+import sys
 
 
 class PrintablesSpider(scrapy.Spider):
     name = "printables"
     allowed_domains = ["printables.com"]
     start_urls = ["https://www.printables.com/graphql/"]
+    logger = logging.getLogger("printables_logger")
+    fh = logging.FileHandler("printables.log")
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    fh.setFormatter(formatter)
+    fh.setLevel("DEBUG")
+    logger.addHandler(fh)
 
     def start_requests(self):
         headers = {
@@ -46,5 +55,31 @@ class PrintablesSpider(scrapy.Spider):
 
     def parse(self, response):
         data = json.loads(response.body)
-        with open('tempfile', 'w') as f:
-            f.write(json.dumps(data, indent=2, sort_keys=False))
+        modelitem = ModelItem()
+
+        try:
+            for item in data["data"]["morePrints"]["items"]:
+                try:
+                    modelitem["id"] = item["id"]
+                    modelitem["name"] = item["name"]
+                    modelitem["likes"] = item["likesCount"]
+                    modelitem["downloads"] = item["downloadCount"]
+                    modelitem["url"] = item["slug"]
+                    modelitem["last_update"] = datetime.utcnow()
+                    modelitem["images"] = item["images"]
+
+                    self.logger.info(json.dumps(item, indent=2, sort_keys=False))
+                    yield modelitem
+
+                except KeyError as e:
+                    self.logger.error(
+                        "Unable to create modelitem. Please check keys in response."
+                    )
+                    self.logger.error(sys.exc_info())
+                except:
+                    self.logger.error("Unable to create modelitem, unknown error.")
+                    self.logger.error(sys.exc_info())
+
+        except KeyError as e:
+            self.logger.error(f"KeyError: Check for issues with the request")
+            self.logger.error(e)
