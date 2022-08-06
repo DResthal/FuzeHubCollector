@@ -135,3 +135,4 @@ print-card.html
 fuze_hub_collector/driver
 *.db
 dbs
+logs/
