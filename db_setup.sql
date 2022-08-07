@@ -4,6 +4,5 @@ CREATE TABLE IF NOT EXISTS models (
 	likes INTEGER NOT NULL,
 	url TEXT,
 	downloads INTEGER,
-	images TEXT[],
 	last_update TIMESTAMP NOT NULL DEFAULT (now() at time zone 'utc'),
 	date_added TIMESTAMP NOT NULL DEFAULT (now() at time zone 'utc'));
