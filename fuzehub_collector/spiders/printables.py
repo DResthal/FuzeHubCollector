@@ -1,5 +1,4 @@
 import scrapy
-from fuzehub_collector.items import ModelItem
 import json
 import logging
 from datetime import datetime
@@ -55,29 +54,29 @@ class PrintablesSpider(scrapy.Spider):
 
     def parse(self, response):
         data = json.loads(response.body)
-        modelitem = ModelItem()
+
+        model = {}
 
         try:
             for item in data["data"]["morePrints"]["items"]:
                 try:
-                    modelitem["id"] = item["id"]
-                    modelitem["name"] = item["name"]
-                    modelitem["likes"] = item["likesCount"]
-                    modelitem["downloads"] = item["downloadCount"]
-                    modelitem["url"] = item["slug"]
-                    modelitem["last_update"] = datetime.utcnow()
-                    modelitem["images"] = item["images"]
+                    model["id"] = item["id"]
+                    model["name"] = item["name"]
+                    model["likes"] = item["likesCount"]
+                    model["downloads"] = item["downloadCount"]
+                    model["url"] = item["slug"]
+                    model["last_update"] = datetime.utcnow()
 
-                    self.logger.info(json.dumps(item, indent=2, sort_keys=False))
-                    yield modelitem
+                    # self.logger.info(json.dumps(item, indent=2, sort_keys=False))
+                    yield model
 
                 except KeyError as e:
                     self.logger.error(
-                        "Unable to create modelitem. Please check keys in response."
+                        "Unable to create model. Please check keys in response."
                     )
                     self.logger.error(sys.exc_info())
                 except:
-                    self.logger.error("Unable to create modelitem, unknown error.")
+                    self.logger.error("Unable to create model, unknown error.")
                     self.logger.error(sys.exc_info())
 
         except KeyError as e:
