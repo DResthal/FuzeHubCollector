@@ -5,41 +5,17 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
-import sqlite3
+from fuzehub_collector.db import Connection
 
 
 class FuzehubCollectorPipeline:
     def __init__(self):
-        self.con = sqlite3.connect("/var/lib/databases/fuzehubmodels.db")
-        self.cur = self.con.cursor()
-        self.create_table()
-
-    def create_table(self):
-        self.cur.execute(
-            """CREATE TABLE IF NOT EXISTS models(
-            id REAL PRIMARY KEY,
-            name TEXT,
-            likes REAL,
-            url TEXT,
-            downloads REAL,
-            last_update TEXT,
-            images TEXT)
-        """
-        )
+        self.conn = Connection("printables")
 
     def process_item(self, item, spider):
-        self.cur.execute(
-            """INSERT OR REPLACE INTO models VALUES (?,?,?,?,?,?,?)""",
-            (
-                item["id"],
-                item["name"],
-                item["likes"],
-                item["downloads"],
-                item["url"],
-                item["last_update"],
-                str(item["images"]),
-            )
-        )
-        self.con.commit()
+
+        item['url'] = f"https://www.printables.com/model/{item['url']}"
+
+        self.conn.save_item(item)
+
         return item

@@ -6,12 +6,4 @@ import scrapy
 
 
 class ModelItem(scrapy.Item):
-    
-    id = scrapy.Field()
-    name = scrapy.Field()
-    likes = scrapy.Field()
-    url = scrapy.Field()
-    downloads = scrapy.Field()
-    last_update = scrapy.Field()
-    images = scrapy.Field()
-
+    pass
