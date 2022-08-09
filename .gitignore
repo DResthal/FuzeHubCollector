@@ -136,3 +136,4 @@ fuze_hub_collector/driver
 *.db
 dbs
 logs/
+.serverless
