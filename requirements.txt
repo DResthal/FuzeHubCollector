@@ -1,6 +1,4 @@
 scrapy
-selenium
 sqlalchemy
 psycopg2-binary
-bs4
 scrapyd-client
