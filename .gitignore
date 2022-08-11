@@ -137,3 +137,6 @@ fuze_hub_collector/driver
 dbs
 logs/
 .serverless
+db_setup.py
+venv/**
+**/__pychache__/**

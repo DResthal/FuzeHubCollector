@@ -1,4 +1,0 @@
-scrapy
-sqlalchemy
-psycopg2-binary
-scrapyd-client
